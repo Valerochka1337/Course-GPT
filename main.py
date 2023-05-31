@@ -10,6 +10,12 @@ bot = Bot(BOT_TOKEN)
 dp = Dispatcher(bot, storage=storage)
 
 
+@dp.message_handler(commands=["start"])
+async def start_command(message: types.Message):
+    reply_message = "Hello," + message.chat.first_name + "!"
+    await bot.send_message(message.chat.id, reply_message)
+
+
 @dp.message_handler()
 async def respond(message: types.Message):
     await message.reply(message.text)
