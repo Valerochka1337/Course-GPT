@@ -4,7 +4,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 import openai
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 BOT_TOKEN = '6105426515:AAEOYtAdJPw2EB4Gxe7KgqTOigJQtLGxfjs'
 OPENAI_TOKEN = "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"
@@ -107,15 +107,20 @@ async def respond(message: types.Message):
             return
         msg_with_context = "Контекст беседы:" + users.loc[user_id, 'context'] \
                            + "Ответь на новое сообщение:" + message.text
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "assistant", "content": do_pirate(msg_with_context)}
-            ],
-            max_tokens=500,
-            n=1,
-            temperature=0.5,
-        )
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "assistant", "content": do_pirate(msg_with_context)}
+                ],
+                max_tokens=500,
+                n=1,
+                temperature=0.5,
+            )
+        except Exception:
+            await message.reply("Аррр, матрос! Нас берут на абордаж! Нет времени шелестеть,"
+                                " давай поговорим, как все уляжется..")
+            return
         users.loc[user_id, 'tokens'] += response["usage"]["total_tokens"]
         users.loc[user_id, 'context'] += " " + message.text + " " + response.choices[0].message["content"]
         await message.reply(response.choices[0].message["content"])
