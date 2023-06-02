@@ -6,8 +6,8 @@ import openai
 import pandas as pd
 from datetime import timedelta
 
-BOT_TOKEN = '6105426515:AAEOYtAdJPw2EB4Gxe7KgqTOigJQtLGxfjs'
-OPENAI_TOKEN = "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"
+BOT_TOKEN = 'YOUR_BOT_TOKEN'
+OPENAI_TOKEN = "YOUR_OPENAI_TOKEN"
 
 openai.api_key = OPENAI_TOKEN
 
@@ -19,7 +19,7 @@ users = pd.read_csv("users.csv", index_col=0)
 
 
 def do_pirate(input_prompt):
-    return input_prompt + f". Ответь, как пират и кратко"
+    return input_prompt + ". Ответь, как пират и кратко"
 
 
 @dp.message_handler(commands=["start"])
@@ -117,7 +117,7 @@ async def respond(message: types.Message):
                 n=1,
                 temperature=0.5,
             )
-        except Exception:
+        except openai.error.RateLimitError:
             await message.reply("Аррр, матрос! Нас берут на абордаж! Нет времени шелестеть,"
                                 " давай поговорим, как все уляжется..")
             return
